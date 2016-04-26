@@ -5,6 +5,4 @@
 Override configuration
 '''
 
-__author = 'Zhifeng Sun'
-
 configs = {}

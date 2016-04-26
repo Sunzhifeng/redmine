@@ -2,7 +2,6 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 class User(object):
-    __slots__ = ('id', 'username', 'password', 'email')
 
     def __init__(self, id, username, password, email):
         self._id  = id
@@ -16,7 +15,7 @@ class User(object):
 
     @property
     def username(self):
-        return self.username
+        return self._username
 
     @property
     def password(self):
@@ -32,6 +31,5 @@ class User(object):
         return self._email
 
     def __str__(self):
-        return 'User object (id=%s, name=%s)' % (self._id, self._name)
+        return 'User object (id=%s, name=%s, email=%s)' % (self._id, self._username, self._email)
 
-    __repr__ == __str__

@@ -5,7 +5,6 @@
 Default configurations
 '''
 
-__author__ = 'Zhifeng Sun'
 
 configs = {}
 
