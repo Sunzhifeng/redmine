@@ -1,14 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+""" this module is used to operate dict object.
+"""
 
-'''
-Configuration
-'''
 
 class Dict(dict):
-    '''
-    Simple dict but support access as x.y style.
-    '''
+    """ Simple dict but support access as x.y style.
+    """
     def __init__(self, names=(), values=(), **kw):
         super(Dict, self).__init__(**kw)
         for k, v in zip(names, values):
@@ -23,7 +19,10 @@ class Dict(dict):
     def __setattr__(self, key, value):
         self[key] = value
 
+
 def merge(defaults, override):
+    """ use override values instead default values.
+    """
     r = {}
     for k, v in defaults.items():
         if k in override:
@@ -36,6 +35,8 @@ def merge(defaults, override):
     return r
 
 def toDict(d):
+    """ transform the default dict to Dict.
+    """
     D = Dict()
     for k, v in d.items():
         D[k] = toDict(v) if isinstance(v, dict) else v

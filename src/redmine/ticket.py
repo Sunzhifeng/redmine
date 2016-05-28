@@ -1,11 +1,16 @@
+import time
+
 
 class Ticket(object):
-    def __init__(self, id, title, author, status=None, assignee=None):
-        self._id = id
+    def __init__(self, title, submitter, status=None, assignee=None):
+        self._id = self._generate_id()
         self._title = title
-        self._author = author
+        self._submitter = submitter
         self._status = status
         self._assignee = assignee
+
+    def _generate_id(self):
+    return self._submitter + '_' + int(time.time())
 
     @property
     def id(self):
@@ -16,8 +21,8 @@ class Ticket(object):
         return self._title
 
     @property
-    def author(self):
-        return self._author
+    def submitter(self):
+        return self._submitter
 
     @property
     def assignee(self):
@@ -36,7 +41,27 @@ class Ticket(object):
     def status(self, status):
         self._status = status
 
-    def __str__(self):
-        return 'Ticket object (id=%s, title=%s, author= %s, status=%s, assignee=%s)' %\
-            (self._id, self._title, self._author, self._status, self._assignee)
+    def __repr__(self):
+        return 'Ticket object (id=%s, title=%s, submitter= %s, status=%s, assignee=%s)' %\
+            (self._id, self._title, self._submitter, self._status, self._assignee)
+
+class BugTicket(Ticket):
+    def __init__(self, title, submitter, status, assignee, found_in):
+        super(BugTicket, self).__init__(title, submitter, status, assignee)
+        self._found_in = found_in
+
+    @property
+    def found_in(self):
+        return self._found_in
+
+class ImprovementTicket(Ticket):
+    def __init__(self, title, submitter, status, assignee, others):
+        super(BugTicket, self).__init__(title, submitter, status, assignee)
+        self._other = other
+
+class FeatureTicket(Ticket):
+    def __init__(self, title, submitter, status, assignee, others):
+        super(BugTicket, self).__init__(title, submitter, status, assignee)
+        self._others = others
+
 
