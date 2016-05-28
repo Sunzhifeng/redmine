@@ -38,7 +38,7 @@ class BetterConsole(Component):
                 print
 
 def GetCurrentUser():
-    return os.getenv('USERNAME') or 'Some User'
+    return os.getenv('USER') or 'Some User'
 
 if __name__ == '__main__':
     print ' IOC Demo'

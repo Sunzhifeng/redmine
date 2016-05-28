@@ -1,8 +1,9 @@
+import os
 import time
 
 
-class BaseTicket(object):
-    def __init__(self, id, title, submitter, status=None, assignee=None):
+class Ticket(object):
+    def __init__(self, title, submitter, status=None, assignee=None):
         self._id = self._generate_id()
         self._title = title
         self._submitter = submitter
@@ -10,7 +11,8 @@ class BaseTicket(object):
         self._assignee = assignee
 
     def _generate_id(self):
-    return self._submitter + '_' + int(time.time())
+        user = os.getenv('USER') or 'some user'
+        return '_'.join([user, str(time.time())])
 
     @property
     def id(self):
@@ -46,9 +48,9 @@ class BaseTicket(object):
             (self._id, self._title, self._submitter, self._status, self._assignee)
 
 
-class BugTicket(BaseTicket):
-    def __init__(self, id, title, submmiter, status=None, assignee=None, found_in):
-        super(BugTicket, self).__init__(id, title, submmiter, status, assignee)
+class BugTicket(Ticket):
+    def __init__(self, title, submmiter, found_in, status=None, assignee=None):
+        super(BugTicket, self).__init__(title, submmiter, status, assignee)
         self._found_in = found_in
 
     @property
@@ -56,11 +58,11 @@ class BugTicket(BaseTicket):
         return self._found_in
 
 
-class ImprovementTicket(BaseTicket):
+class ImprovementTicket(Ticket):
     pass
 
 
-class FeatureTicket(BaseTicket):
-    def __init__(self, id, title, submitter, status=None, assignee=None, target_sprint):
-        super(BugTicket, self).__init__(id, title, submitter, status, assignee)
+class FeatureTicket(Ticket):
+    def __init__(self, title, submitter, target_sprint, status=None, assignee=None):
+        super(FeatureTicket, self).__init__(title, submitter, status, assignee)
         self.target_sprint = target_sprint
