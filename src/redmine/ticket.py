@@ -55,8 +55,10 @@ class BugTicket(BaseTicket):
     def found_in(self):
         return self._found_in
 
+
 class ImprovementTicket(BaseTicket):
     pass
+
 
 class FeatureTicket(BaseTicket):
     def __init__(self, id, title, submitter, status=None, assignee=None, target_sprint):
