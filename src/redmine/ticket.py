@@ -1,8 +1,8 @@
 import time
 
 
-class Ticket(object):
-    def __init__(self, title, submitter, status=None, assignee=None):
+class BaseTicket(object):
+    def __init__(self, id, title, submitter, status=None, assignee=None):
         self._id = self._generate_id()
         self._title = title
         self._submitter = submitter
@@ -45,23 +45,20 @@ class Ticket(object):
         return 'Ticket object (id=%s, title=%s, submitter= %s, status=%s, assignee=%s)' %\
             (self._id, self._title, self._submitter, self._status, self._assignee)
 
-class BugTicket(Ticket):
-    def __init__(self, title, submitter, status, assignee, found_in):
-        super(BugTicket, self).__init__(title, submitter, status, assignee)
+
+class BugTicket(BaseTicket):
+    def __init__(self, id, title, submmiter, status=None, assignee=None, found_in):
+        super(BugTicket, self).__init__(id, title, submmiter, status, assignee)
         self._found_in = found_in
 
     @property
     def found_in(self):
         return self._found_in
 
-class ImprovementTicket(Ticket):
-    def __init__(self, title, submitter, status, assignee, others):
-        super(BugTicket, self).__init__(title, submitter, status, assignee)
-        self._other = other
+class ImprovementTicket(BaseTicket):
+    pass
 
-class FeatureTicket(Ticket):
-    def __init__(self, title, submitter, status, assignee, others):
-        super(BugTicket, self).__init__(title, submitter, status, assignee)
-        self._others = others
-
-
+class FeatureTicket(BaseTicket):
+    def __init__(self, id, title, submitter, status=None, assignee=None, target_sprint):
+        super(BugTicket, self).__init__(id, title, submitter, status, assignee)
+        self.target_sprint = target_sprint
