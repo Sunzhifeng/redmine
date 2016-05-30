@@ -1,5 +1,5 @@
-class BaseTicketService(object):
-    def assign(self, ticket, person):
+class TicketService(object):
+    def assign(self, ticket, user):
         pass
 
     def verify(self, ticket):
@@ -8,14 +8,14 @@ class BaseTicketService(object):
     def close(self, ticket):
         pass
 
-class BugTicketSerivce(BaseTicketService):
+class BugTicketSerivce(TicketService):
     def feed_back(self):
         pass
 
-class ImprovementTicketService(BaseTicketService):
+class ImprovementTicketService(TicketService):
     pass
 
-class FeatureTicketService(BaseTicketService):
+class FeatureTicketService(TicketService):
     pass
 
 
