@@ -3,7 +3,7 @@ import time
 
 
 class Ticket(object):
-    def __init__(self, title, submitter, status=None, assignee=None):
+    def __init__(self, id, title, submitter, status=None, assignee=None):
         self._id = self._generate_id()
         self._title = title
         self._submitter = submitter
@@ -49,7 +49,7 @@ class Ticket(object):
 
 
 class BugTicket(Ticket):
-    def __init__(self, title, submmiter, found_in, status=None, assignee=None):
+    def __init__(self, title, submiter, found_in, status=None, assignee=None):
         super(BugTicket, self).__init__(title, submmiter, status, assignee)
         self._found_in = found_in
 
