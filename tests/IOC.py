@@ -1,3 +1,8 @@
+"""
+    This module is used to implement IOC.
+"""
+
+
 class FeatureBroker:
     """ Feature Borker
     """
@@ -21,44 +26,49 @@ class FeatureBroker:
             raise KeyError, 'Unknown feature named %r' % feature
         return provider()
 
+
 features = FeatureBroker()
 
 
-""" Representation of required features and feature assertions
-"""
-
-def noAssertion(obj):
-    return True
-
-def isInstanceOf(*classes):
-    def test(obj): return isinstance(obj, classes)
-    return test
-
-def hasAttributes(*attributes):
-    def test(obj):
-        for attr in attributes:
-            if not hasattr(obj, attr):
-                return False
-            return True
-    return test
-
-def hasMethods(*methods):
-    def test(obj):
-        for method in methods:
-            try:
-                attr = getattr(obj, method)
-            except AttributeError:
-                return False
-            if not callable(attr):
-                return False
+class FeatureUtils (object):
+    """ Representation of required features and feature assertions
+    """
+    @classmethod
+    def noAssertion(cls, obj):
         return True
-    return test
+
+    @classmethod
+    def isInstanceOf(cls, *classes):
+        def test(obj): return isinstance(obj, classes)
+        return test
+
+    @classmethod
+    def hasAttributes(cls, *attributes):
+        def test(obj):
+            for attr in attributes:
+                if not hasattr(obj, attr):
+                    return False
+                return True
+        return test
+
+    @classmethod
+    def hasMethods(cls, *methods):
+        def test(obj):
+            for method in methods:
+                try:
+                    attr = getattr(obj, method)
+                except AttributeError:
+                    return False
+                if not callable(attr):
+                    return False
+            return True
+        return test
 
 
 class RequiredFeature(object):
     """ An attribute descriptor to 'declare' required features
     """
-    def __init__(self, feature, assertion=noAssertion):
+    def __init__(self, feature, assertion=FeatureUtils.noAssertion):
         self.feature = feature
         self.assertion = assertion
 
