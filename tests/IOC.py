@@ -1,6 +1,6 @@
-""" Feature Borker
-"""
 class FeatureBroker:
+    """ Feature Borker
+    """
     def __init__(self, allowReplace=False):
         self.providers = {}
         self.allowReplace = allowReplace
@@ -55,9 +55,9 @@ def hasMethods(*methods):
     return test
 
 
-""" An attribute descriptor to 'declare' required features
-"""
 class RequiredFeature(object):
+    """ An attribute descriptor to 'declare' required features
+    """
     def __init__(self, feature, assertion=noAssertion):
         self.feature = feature
         self.assertion = assertion

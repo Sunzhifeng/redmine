@@ -65,4 +65,8 @@ class ImprovementTicket(Ticket):
 class FeatureTicket(Ticket):
     def __init__(self, title, submitter, target_sprint, status=None, assignee=None):
         super(FeatureTicket, self).__init__(title, submitter, status, assignee)
-        self.target_sprint = target_sprint
+        self._target_sprint = target_sprint
+
+    @property
+    def target_sprint(self):
+        return self._target_sprint

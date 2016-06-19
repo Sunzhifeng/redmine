@@ -1,4 +1,6 @@
 class TicketHandler(object):
+    """ ticker handler model means the relation of ticket and user.
+    """
     def assign_ticket(self, tId, uId):
         ticket = TicketDao.get(tId)
         user = userDao.get(uId)

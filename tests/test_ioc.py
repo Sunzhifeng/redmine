@@ -3,6 +3,7 @@ from context import redmine
 from redmine.ticket import Ticket, BugTicket, FeatureTicket
 from IOC import features, isInstanceOf, hasAttributes, hasMethods, RequiredFeature
 
+
 class TicketService(object):
     def my_info(self):
         pass
@@ -13,7 +14,7 @@ class BugTicketService(TicketService):
         return 'bug ticket service'
 
 class FeatureTicketService(TicketService):
-    featureTicket = RequiredFeature('bug', isInstanceOf(Ticket))
+    featureTicket = RequiredFeature('feature', isInstanceOf(Ticket))
     def my_info(self):
         return 'feature ticket service'
 
@@ -24,7 +25,6 @@ class Main(object):
     def print_myself(self):
         print self.bugService.my_info()
         print self.featureService.my_info()
-
 
 
 if __name__ == '__main__':
