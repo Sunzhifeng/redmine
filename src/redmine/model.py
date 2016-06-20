@@ -74,6 +74,8 @@ class Ticketing(Model):
     id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
     ticket_id = StringField(ddl='varchar(50)')
     submitter_id = StringField(ddl='varchar(50)')
+    submitter_name = StringField(ddl='varchar(50)')
     assignee_id = StringField(ddl='varchar(50)')
+    assignee_name = StringField(ddl='varchar(50)')
     status = StringField(ddl='varchar(50)')
     create_at = FloatField(default=time.time)
