@@ -1,3 +1,7 @@
+"""
+    This module is used to get the application context.
+"""
+
 import os
 import sys
 
