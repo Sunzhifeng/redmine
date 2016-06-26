@@ -1,24 +1,27 @@
-from user import User
-from ticket import Ticket, BugTicket, FeatureTicket, ImprovementTicket
-from service import TicketService, BugTicketService, FeatureTicketService, ImprovementTicketService
-from IOC import features, FeatureUtils, RequiredFeature
+"""
+    This moudle is used to handle all DI in app.
+"""
+from db.model import BugTicket, FeatureTicket, ImprovementTicket
+from db.model import Ticketing, User
+from handler import TicketHandler, UserHandler, TicketingHandler
+from service import BugService, FeatureService, ImprovementService
+from IOC import features, FeatureUtils
 
 
-class Main(object):
-    bugService = RequiredFeature('bugService', FeatureUtils.isInstanceOf(TicketService))
-    featureService = RequiredFeature('featureService', FeatureUtils.isInstanceOf(TicketService))
-    user = RequiredFeature('user', FeatureUtils.isInstanceOf(User))
-
-    def print_info(self):
-        print self.bugService.my_info()
-        print self.featureService.my_info()
-
-
-if __name__ == '__main__':
+def execute():
+    """ this function is used to execute dependency inject (DI).
+    """
     features.provide('bug', BugTicket('bug','ezhifsu','foundin'))
     features.provide('feature', FeatureTicket('feature','ezhifsu','target'))
+    features.provide('improvement', ImprovementTicket('bug','ezhifsu','foundin'))
+    features.provider('bugHandler', TicketHandler(BugTicket))
+    features.provider('featureHandler', TicketHandler(FeatureTicket))
+    features.provider('imporvementHandler', TicketHandler(ImprovementTicket))
+    features.provider('userHandler', UserHandler(User))
+    features.provider('ticketingHandler', TicketingHandler(Ticketing))
 
-    features.provide('bugService', BugTicketService) # singleton lifestyle
-    features.provide('featureService', FeatureTicketService())
+    features.provide('bugService', BugService()) # singleton lifestyle
+    features.provide('featureService', FeatureService())
+    features.provide('improvementService', ImprovementService())
 
-    Main().print_info()
+

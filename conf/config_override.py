@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''
-Override configuration
-'''
+"""
+    Override configuration
+"""
 
 configs = {}

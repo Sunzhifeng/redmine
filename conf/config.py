@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-""" Configuration
+"""
+    Configuration
 """
 
 import sys

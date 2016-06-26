@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+
 """
     This module includes all models that are mapped into tables in db.
 """
+
 import time
 import uuid
 
@@ -16,7 +18,7 @@ def next_id():
 class User(Model):
     __table__ = 'users'
 
-    id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
+    _id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
     name = StringField(ddl='varchar(50)')    # it is not eid.
     password = StringField(ddl='varchar(50)')
     admin = BooleanField()
@@ -27,42 +29,49 @@ class User(Model):
 class Ticket(Model):
     __table__ = 'tickets'
 
-    id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
+    _id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
     num = IntegerField()
     title = StringField(ddl='varchar(200)')
+    category = StringField(ddl='varchar(50)')
     description = TextField()
+    submitter_id = StringField(ddl='varchar(50)')
+    submitter_name = StringField(ddl='varchar(50)')
+    status = StringField(ddl='varchar(50)')
     create_at = FloatField(default=time.time)
 
 
 class BugTicket(Ticket):
     __table__ = 'bugTickets'
 
-    id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
+    _id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
     num = IntegerField()
     title = StringField(ddl='varchar(200)')
     description = TextField()
-    found_in = StringField(ddl='varchar(200)')
+    found_in = StringField(ddl='varchar(200)')    # special attr for bug
+    status = StringField(ddl='varchar(50)')
     create_at = FloatField(default=time.time)
 
 
 class ImprovementTicket(Ticket):
     __table__ = 'improvementTickets'
 
-    id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
+    _id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
     num = IntegerField()
     title = StringField(ddl='varchar(200)')
     description = TextField()
+    status = StringField(ddl='varchar(50)')
     create_at = FloatField(default=time.time)
 
 
 class FeatureTicket(Ticket):
     __table__ = 'featureTickets'
 
-    id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
+    _id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
     num = IntegerField()
     title = StringField(ddl='varchar(200)')
     description = TextField()
-    target_sprint = TextField()
+    target_sprint = TextField()    # spicial attr for feature
+    status = StringField(ddl='varchar(50)')
     create_at = FloatField(default=time.time)
 
 
@@ -71,11 +80,8 @@ class Ticketing(Model):
     """
     __table__ = 'Ticketing'
 
-    id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
+    _id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
     ticket_id = StringField(ddl='varchar(50)')
-    submitter_id = StringField(ddl='varchar(50)')
-    submitter_name = StringField(ddl='varchar(50)')
     assignee_id = StringField(ddl='varchar(50)')
     assignee_name = StringField(ddl='varchar(50)')
-    status = StringField(ddl='varchar(50)')
     create_at = FloatField(default=time.time)
