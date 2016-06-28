@@ -4,15 +4,45 @@
 """
 import sys
 import datetime
-
+import logging
 sys.path.append('../lib')
 
 from mongokit import Document, Connection, IS
 from validator import ValidatorUtils
 
+logger = logging.getLogger(__name__)
+
 HOSTNAME = 'localhost'
 PORT = 27017
 connection = Connection(host=HOSTNAME, port=PORT)
+
+
+class MongoDB(object):
+    """ This class is used as interface for mongoDB operation.
+    """
+    def __init__(self, ip='localhost', port=27017):
+        self.ip = ip
+        self.port = port
+        self.client = None
+
+    def __repr__(self):
+        return '%s:%s' % (self.ip, self.port)
+
+    def __enter__(self):
+        self._connect()
+        return self
+
+    def __exit__(self, *unused):
+        self.client.close()
+
+    def _connect(self):
+        try:
+            self.client = pymongo.MongoClient(self.ip, self.port)
+            logger.debug("Connected to %s:%s" % (self.ip, self.port))
+        except pymongo.errors.ConnectionFailure as error:
+            logger.error("Couldn't connect to server: %s" % error)
+            raise
+
 
 @connection.register
 class RootDoc(Document):

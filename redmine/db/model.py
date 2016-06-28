@@ -28,6 +28,10 @@ class User(Base):
     admin = BooleanField()
     email = StringFeild(ddl='varchar(50)')
 
+    def __repr__(self):
+        return "<User(name='%s', password='%s', admin='%s', email='%s')>" %\
+                (self.name, self.password, str(self.admin), self.email)
+
 
 class Ticket(Base):
     num = IntegerField()
