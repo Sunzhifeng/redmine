@@ -37,7 +37,7 @@ class MongoDB(object):
 
     def _connect(self):
         try:
-            self.client = pymongo.MongoClient(self.ip, self.port)
+            self.client = Connection(self.ip, self.port)
             logger.debug("Connected to %s:%s" % (self.ip, self.port))
         except pymongo.errors.ConnectionFailure as error:
             logger.error("Couldn't connect to server: %s" % error)
