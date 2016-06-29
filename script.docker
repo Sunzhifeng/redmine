@@ -1,9 +1,18 @@
-##########################
+############################
 # docker commands for mysql
-#########################
-
+###########################
 # start mysql service
 docker run --name mysql-001 -e MYSQL_ROOT_PASSWORD=123456 -d daocloud.io/mysql:5.7
 
 # insight the container mysql-001
 docker exec -it mysql-001 bash
+
+
+############################
+# docker commands for mongo
+###########################
+# start mongo service 
+docker run --name mongo-001 -v ./data:/data/db -p 27017:27017 -d daocloud.io/mongo
+
+# insight container mongo-001
+docker exec -it mongo-001 bash

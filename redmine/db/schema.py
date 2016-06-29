@@ -2,25 +2,25 @@
 """
     This module includes all documents that are mapped into collections in mongodb.
 """
-import sys
+import uuid
+import time
 import datetime
 import logging
-sys.path.append('../lib')
 
-from mongokit import Document, Connection, IS
+from mongokit import Document, Connection
 from validator import ValidatorUtils
 
 logger = logging.getLogger(__name__)
 
-HOSTNAME = 'localhost'
-PORT = 27017
-connection = Connection(host=HOSTNAME, port=PORT)
+DEFAULT_HOST = 'localhost'
+DEFAULT_PORT = 27017
 
+connection = Connection(DEFAULT_HOST, DEFAULT_PORT)
 
 class MongoDB(object):
     """ This class is used as interface for mongoDB operation.
     """
-    def __init__(self, ip='localhost', port=27017):
+    def __init__(self, ip=DEFAULT_HOST, port=DEFAULT_PORT):
         self.ip = ip
         self.port = port
         self.client = None
@@ -44,7 +44,11 @@ class MongoDB(object):
             raise
 
 
-@connection.register
+def next_id():
+    """ 50 bits for uuid
+    """
+    return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
+
 class RootDoc(Document):
     """ the root document is used to define commons.
     """
@@ -53,14 +57,14 @@ class RootDoc(Document):
     skip_validation = True
 
     structure = {
-        '_id': uuid.UUID,
+        '_id': basestring,
         'create_at': datetime.datetime
     }
 
     required_fields = ['create_at', '_id']
 
     default_values = {
-        '_id': uuid.UUID,
+        '_id': next_id,
         'create_at': datetime.datetime.utcnow
     }
 
@@ -97,7 +101,7 @@ class Ticket(RootDoc):
         'no': int,
         'title': basestring,
         'description': basestring,
-        'status': IS('New', 'Verified','Solved', 'Closed'),
+        'status': basestring,
         'submitter_id': uuid.UUID,
         'submitter_name': basestring
     }
@@ -120,6 +124,7 @@ class Improvement(Ticket):
     __collection__ = 'improvements'
 
 
+@connection.register
 class Feature(Ticket):
     __collection__ = 'features'
 

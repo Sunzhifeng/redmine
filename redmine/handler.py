@@ -103,7 +103,7 @@ class TicketHandler(Handler, HandlerImp):
     """
     def __init__(self, Cls):
         if issubclass(Cls, Ticket):
-            super().__init__()  # ignore ?
+            super(TicketHandler, self).__init__()  # ignore ?
             super_classs = TicketHandler.__bases__
             HandlerImp.__init__(Cls)
         else:
@@ -115,7 +115,7 @@ class UserHandler(Handler, Imp):
     """
     def __init__(self, Cls):
         if issubclass(Cls, User):
-            super().__init__()
+            super(UserHandler, self).__init__()
             HandlerImp.__init__(Cls)
         else:
             raise UnExpectClassException('UserHandler can not handle <%s>' % Cls)
@@ -125,7 +125,7 @@ class TicketingHandler(Handler, HandlerImp):
     """
     """
     def __init__(self, Cls):
-        if issubclass(Cls, User):
+        if issubclass(Cls, Ticketing):
             super().__init__()
             HandlerImp.__init__(Cls)
         else:
