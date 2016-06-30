@@ -16,6 +16,7 @@ DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 27017
 
 connection = Connection(DEFAULT_HOST, DEFAULT_PORT)
+#connection = MongoDB(DEFAULT_HOST, DEFAULT_PORT)
 
 class MongoDB(object):
     """ This class is used as interface for mongoDB operation.
@@ -106,8 +107,8 @@ class Ticket(RootDoc):
         'submitter_name': basestring
     }
 
-    required_fields = ['no', 'title', 'status', 'submitter_id',
-                       'submitter_name']
+    required_fields = ['no', 'title', 'status',
+                       'submitter_id', 'submitter_name']
 
 
 @connection.register

@@ -1,30 +1,27 @@
 """
     This module is used to handle db operations.
 """
-from exception import UnImplementException, UnKnownAttributeExcetpion
-from db.schema import connection, Ticket, Bug, Improvement, Feature, User, Ticketing
+from exception import UnImplementException
+from db.model import Ticket, User, Ticketing
 
 
 class Handler(object):
     """ this class defines interfaces that interact with db.
     """
-    def __init__(self):
-        pass
-
     def create(self, data):
-        raise UnImplementException("SubClass of Handler: <creat>")
+        raise UnImplementException()
 
     def delete(self, _filter):
-        raise UnImplementException("SubClass of Handler: <delete>")
+        raise UnImplementException()
 
     def update(self, _filter, data):
-        raise UnImplementException("SubClass of Handler: <update>")
+        raise UnImplementException()
 
     def get(self, _filter):
-        raise UnImplementException("SubClass of Handler: <get>")
+        raise UnImplementException()
 
     def list(self):
-        raise UnImplementException("SubClass of Handler: <list>")
+        raise UnImplementException()
 
 
 class HandlerImp(object):
@@ -36,41 +33,51 @@ class HandlerImp(object):
     def create(self, data):
         """ data is a dict that means the items attr-value.
         """
-        checkattrs(self.Cls, data)
-        Cls = self.Cls
-        obj = connection.Cls()
-        assignattrs(obj, data)
+        checkattrs(self.Cls, data):
+        obj = Cls()
+        for (attr, value) in data.items:
+            obj.attr = value
         obj.save()
 
     def delete(self, _filter):
         """ delete by id if id is provided, else by other attrs.
         """
         checkattrs(self.Cls, _filter)
-        objs = self.Cls.find(_filter)
-        for obj in objs:
-            obj.delete()
-        return len(objs)
+        if '_id' in _filter:
+            obj = Cls.find(_filter._id)
+            return obj.remove()
+        else:
+            objs = Cls.findAll(_filter)
+            for obj in objs:
+                obj.remove()
+            return len(objs)
 
     def update(self, _filter, data):
         """ update by id if id is provided, else by other attrs.
         """
         checkattrs(self.Cls, _filter)
         checkattrs(self.Cls, data)
-        objs = Cls.find_one(_filter)
-        for obj in objs:
+        if '_id' in  _filter:
+            obj = Cls.find(_filter._id)
             assignattrs(obj, data)
             obj.update()
-        return len(objs)
+        else:
+            objs = Cls.findAll(_filter)
+            for obj in objs:
+                assignattrs(obj, data)
+                obj.update()
 
     def get(self, _filter):
         """ get by id if id is provided, else by other attrs.
         """
-        checkattrs(self.Cls, _filter)
-        Cls = self.Cls
-        return connection.Cls.find(_filter._id)
+        checkattrs(self.Cls, _filter):
+        if '_id' in _filter:
+            return Cls.find(_filter._id)
+        else:
+            return Cls.findAll(_filter)
 
     def list(self):
-        return Cls.find()
+        return Cls.findAll()
 
 
 def checkattrs(Cls, _filter):
@@ -79,8 +86,8 @@ def checkattrs(Cls, _filter):
     if len(_filter) == 0:
         return None
     for(attr, value) in _filter.items():
-        if not attr in Cls._namespaces:
-            raise UnKnownAttributeExcetpion('%s has no attribute <%s>' % (Cls, attr))
+        if not hasattr(Cls, attr):
+            raise UnKnownAttributeExcetpion('%s has no attribute <%s>', % (Cls, attr))
 
 
 def assignattrs(obj, data):
@@ -102,12 +109,13 @@ class TicketHandler(Handler, HandlerImp):
             raise UnExpectClassException('TicketHandler can not handle <%s>' % Cls)
 
 
-class UserHandler( HandlerImp):
+class UserHandler(Handler, Imp):
     """
     """
     def __init__(self, Cls):
         if issubclass(Cls, User):
-            super(UserHandler, self).__init__(Cls)
+            super(UserHandler, self).__init__()
+            HandlerImp.__init__(Cls)
         else:
             raise UnExpectClassException('UserHandler can not handle <%s>' % Cls)
 
