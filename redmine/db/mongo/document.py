@@ -7,7 +7,7 @@ import time
 import datetime
 import logging
 
-from mongokit import Document, Connection
+from .mongokit import Document, Connection
 from validator import ValidatorUtils
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,6 @@ DEFAULT_HOST = 'localhost'
 DEFAULT_PORT = 27017
 
 connection = Connection(DEFAULT_HOST, DEFAULT_PORT)
-#connection = MongoDB(DEFAULT_HOST, DEFAULT_PORT)
 
 class MongoDB(object):
     """ This class is used as interface for mongoDB operation.
@@ -115,9 +114,7 @@ class Ticket(RootDoc):
 class Bug(Ticket):
     __collection__ = 'bugs'
 
-    structure = {
-        'found_in': basestring,
-    }
+    structure = {'found_in': basestring}
 
 
 @connection.register
@@ -129,9 +126,7 @@ class Improvement(Ticket):
 class Feature(Ticket):
     __collection__ = 'features'
 
-    structure = {
-        'target_sprint': basestring
-    }
+    structure = {'target_sprint': basestring}
 
     required_fields = ['target_sprint']
 
@@ -143,7 +138,7 @@ class Ticketing(RootDoc):
     __collection__ = 'Ticketing'
 
     structure = {
-        'ticket_id': uuid.UUID,
-        'asignee_id': uuid.UUID,
+        'ticket_id': basestring,
+        'asignee_id': basestring,
         'assignee_name': basestring
     }

@@ -17,11 +17,11 @@ def log(sql, args=()):
 
 
 @asyncio.coroutine
-def create_pool(loop, **kw):
+def create_pool(loop=None, **kw):
     logger.info('create database connection pool...')
     global __pool
-    __pool = yield from aiomysql.creat_pool(
-        host = kw.get('host', 'localhost'),
+    __pool = yield from aiomysql.create_pool(
+        host = kw.get('host', '127.0.0.1'),
         port = kw.get('port', 3306),
         user = kw['user'],
         password = kw['password'],
@@ -34,12 +34,12 @@ def create_pool(loop, **kw):
     )
 
 
-@asyncio.coroutinue
-def select(sql, args, size=None)
+@asyncio.coroutine
+def select(sql, args, size=None):
     log(sql, args)
     global __pool
     with (yield from __pool) as conn:
-        cur = yield from conn.curso(aiomysql.DictCurso)
+        cur = yield from conn.cursor(aiomysql.DictCursor)
         yield from cur.execute(sql.replace('?', '%s'), args or ())
         if size:
             rs = yield from cur.fetchmany(size)
@@ -53,7 +53,10 @@ def select(sql, args, size=None)
 @asyncio.coroutine
 def execute(sql, args, autocommit=True):
     log(sql)
-    with (yeild from __pool) as conn:
+    global __pool
+    with (yield from __pool) as conn:
+        if not autocommit:
+            yield from conn.begin()
         try:
             cur = yield from conn.cursor()
             yield from cur.execute(sql.replace('?', '%s'), args)
@@ -63,6 +66,7 @@ def execute(sql, args, autocommit=True):
         except BaseException as e:
             if not autocommit:
                 yield from conn.rollback()
+            raise
         return affected
 
 
@@ -83,17 +87,17 @@ class Field(object):
         self.default = default
 
     def __repr__(self):
-        return '<%s, %s:%s>' % (self.__class__.__name__), self.column_type, self.name)
+        return '<%s, %s:%s>' % (self.__class__.__name__, self.column_type, self.name)
 
 
-class BooleanField(Filed):
+class BooleanField(Field):
     """ boolean type descriptor.
     """
     def __init__(self, name=None, default=False):
         super(BooleanField, self).__init__(name, 'boolean', False, default)
 
 
-class StringFiled(Field):
+class StringField(Field):
     """ string type descriptor
     """
     def __init__(self, name=None, primary_key=False, default=None, ddl='varchar(100)'):
@@ -109,7 +113,7 @@ class IntegerField(Field):
 class FloatField(Field):
     """ float type descriptor
     """
-    def __init__(self, name=None, primary_key=Flase, default = 0.0):
+    def __init__(self, name=None, primary_key=False, default = 0.0):
         super(FloatField, self).__init__(name, 'real', primary_key, default)
 
 
@@ -117,14 +121,14 @@ class TextField(Field):
     """ text type desscriptor
     """
     def __init__(self, name=None, default=None):
-        super(TextField, self).__init__(name, 'text', default)
+        super(TextField, self).__init__(name, 'text', False, default)
 
 
 class ModelMetaclass(type):
     def __new__(cls, name, bases, attrs):
         if name =='Model':
             return type.__new__(cls, name, bases, attrs)
-        tableName = attrs.get('__table__'， None) or name
+        tableName = attrs.get('__table__', None) or name
         logger.info('found model: %s (table: %s)' % (name, tableName))
 
         # get fields and primary key
@@ -188,6 +192,7 @@ class Model(dict, metaclass=ModelMetaclass):
     def findAll(cls, where=None, args=None, **kw):
         """ find objects by where clause.
         """
+        sql = [cls.__select__]
         if where:
             sql.append('where')
             sql.append(where)
@@ -239,7 +244,7 @@ class Model(dict, metaclass=ModelMetaclass):
     def save(self):
         args = list(map(self.getValueOrDefault, self.__fields__))
         args.append(self.getValueOrDefault(self.__primary_key__))
-        rows = yeild from execute(self.__insert__, args)
+        rows = yield from execute(self.__insert__, args)
         if rows != 1:
             logger.warn('failed to insert record: affected rows: %s' % rows)
 

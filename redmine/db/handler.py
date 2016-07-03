@@ -1,8 +1,8 @@
 """
     This module is used to handle db operations.
 """
-from exception import UnImplementException
-from db.model import Ticket, User, Ticketing
+from .exception import UnImplementException
+from .mysql.model import Bug, Feature, Improvement, User, Ticketing
 
 
 class Handler(object):
@@ -24,7 +24,7 @@ class Handler(object):
         raise UnImplementException()
 
 
-class HandlerImp(object):
+class HandlerImp(Handler):
     """ this class implements the interfaces that interact with db.
     """
     def __init__(self, Cls):
@@ -33,7 +33,7 @@ class HandlerImp(object):
     def create(self, data):
         """ data is a dict that means the items attr-value.
         """
-        checkattrs(self.Cls, data):
+        checkattrs(self.Cls, data)
         obj = Cls()
         for (attr, value) in data.items:
             obj.attr = value
@@ -70,7 +70,7 @@ class HandlerImp(object):
     def get(self, _filter):
         """ get by id if id is provided, else by other attrs.
         """
-        checkattrs(self.Cls, _filter):
+        checkattrs(self.Cls, _filter)
         if '_id' in _filter:
             return Cls.find(_filter._id)
         else:
@@ -87,7 +87,7 @@ def checkattrs(Cls, _filter):
         return None
     for(attr, value) in _filter.items():
         if not hasattr(Cls, attr):
-            raise UnKnownAttributeExcetpion('%s has no attribute <%s>', % (Cls, attr))
+            raise UnKnownAttributeExcetpion('%s has no attribute <%s>' % (Cls, attr))
 
 
 def assignattrs(obj, data):
@@ -97,35 +97,33 @@ def assignattrs(obj, data):
         obj.attr = value
 
 
-class TicketHandler(Handler, HandlerImp):
-    """
+class TicketHandler(HandlerImp):
+    """ This handler is used to handle bug, improvement, feature.
     """
     def __init__(self, Cls):
-        if issubclass(Cls, Ticket):
-            super(TicketHandler, self).__init__()  # ignore ?
-            super_classs = TicketHandler.__bases__
-            HandlerImp.__init__(Cls)
+        if issubclass(Cls, Bug) or \
+                issubclass(Cls, Feature) or \
+                    issubclass(Cls, Improvement):
+            super(TicketHandler, self).__init__(Cls)  # ignore ?
         else:
             raise UnExpectClassException('TicketHandler can not handle <%s>' % Cls)
 
 
-class UserHandler(Handler, Imp):
+class UserHandler(HandlerImp):
     """
     """
     def __init__(self, Cls):
         if issubclass(Cls, User):
-            super(UserHandler, self).__init__()
-            HandlerImp.__init__(Cls)
+            super(UserHandler, self).__init__(Cls)
         else:
             raise UnExpectClassException('UserHandler can not handle <%s>' % Cls)
 
 
-class TicketingHandler(Handler, HandlerImp):
+class TicketingHandler(HandlerImp):
     """
     """
     def __init__(self, Cls):
         if issubclass(Cls, Ticketing):
-            super().__init__()
-            HandlerImp.__init__(Cls)
+            super(TicketingHandler, self).__init__(Cls)
         else:
             raise UnExpectClassException('TicketingHandler can not handle <%s>' % Cls)

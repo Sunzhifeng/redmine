@@ -1,9 +1,9 @@
 """
     This moudle is used to handle all DI in app.
 """
-from db.model import BugTicket, FeatureTicket, ImprovementTicket
-from db.model import Ticketing, User
-from handler import TicketHandler, UserHandler, TicketingHandler
+from db.mysql.model import BugTicket, FeatureTicket, ImprovementTicket
+from db.mysql.model import Ticketing, User
+from db.handler import TicketHandler, UserHandler, TicketingHandler
 from service import BugService, FeatureService, ImprovementService
 from IOC import features, FeatureUtils
 

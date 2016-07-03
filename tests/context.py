@@ -5,6 +5,5 @@
 import os
 import sys
 
-sys.path.append(os.path.abspath('..'))
-
-import redmine
+project_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(project_path, 'redmine'))

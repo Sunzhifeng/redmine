@@ -27,7 +27,7 @@ class Handler(object):
         raise UnImplementException("SubClass of Handler: <list>")
 
 
-class HandlerImp(object):
+class HandlerImp(Handler):
     """ this class implements the interfaces that interact with db.
     """
     def __init__(self, Cls):
@@ -90,14 +90,12 @@ def assignattrs(obj, data):
         obj.attr = value
 
 
-class TicketHandler(Handler, HandlerImp):
+class TicketHandler(HandlerImp):
     """
     """
     def __init__(self, Cls):
         if issubclass(Cls, Ticket):
-            super(TicketHandler, self).__init__()  # ignore ?
-            super_classs = TicketHandler.__bases__
-            HandlerImp.__init__(Cls)
+            super(TicketHandler, self).__init__(Cls)  # ignore ?
         else:
             raise UnExpectClassException('TicketHandler can not handle <%s>' % Cls)
 
@@ -117,7 +115,6 @@ class TicketingHandler(Handler, HandlerImp):
     """
     def __init__(self, Cls):
         if issubclass(Cls, Ticketing):
-            super().__init__()
-            HandlerImp.__init__(Cls)
+            super(TicketingHandler, self).__init__(Cls)
         else:
             raise UnExpectClassException('TicketingHandler can not handle <%s>' % Cls)

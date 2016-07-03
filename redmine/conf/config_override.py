@@ -5,4 +5,5 @@
     Override configuration
 """
 
-configs = {}
+configs = {
+}
