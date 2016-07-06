@@ -15,11 +15,6 @@ def next_id():
     return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
 
 
-# class Common(Model):
-#     _id = StringField(primary_key=True, default= next_id, ddl='varchar(50)')
-#     create_at = FloatField(default=time.time)    # ignore time zone and date
-
-
 class User(Model):
     __table__ = 'users'
 

@@ -5,14 +5,14 @@
 USER1 = {
     'name': 'test1',
     'password': 'test1',
-    'admin': True,
+    'is_admin': False,
     'email': 'test1@example.com'
 }
 
 USER2 = {
     'name': 'test2',
     'password': 'test2',
-    'admin': True,
+    'is_admin': False,
     'email': 'test2@example.com'
 }
 
@@ -30,6 +30,16 @@ Improvement = {
     'num': '001',
     'title': 'improvement-001 for testing',
     'description': '',
+    'submitter_id': '',
+    'submitter_name': '',
+    'status': '',
+}
+
+Feature = {
+    'num': '001',
+    'title': 'Feature-001 for testing',
+    'description': '',
+    'target_sprint': 'work enough is ok',
     'submitter_id': '',
     'submitter_name': '',
     'status': '',

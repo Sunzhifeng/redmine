@@ -7,7 +7,7 @@ import time
 import datetime
 import logging
 
-from .mongokit import Document, Connection
+from mongokit import Document, Connection
 from validator import ValidatorUtils
 
 logger = logging.getLogger(__name__)
@@ -43,30 +43,28 @@ class MongoDB(object):
             logger.error("Couldn't connect to server: %s" % error)
             raise
 
-
 def next_id():
-    """ 50 bits for uuid
-    """
     return '%015d%s000' % (int(time.time() * 1000), uuid.uuid4().hex)
+
 
 class RootDoc(Document):
     """ the root document is used to define commons.
     """
     __database__ = 'redmine'
     use_dot_notation = True
-    skip_validation = True
+    skip_validation = False
 
     structure = {
         '_id': basestring,
-        'create_at': datetime.datetime
+        'create_at': float
     }
 
-    required_fields = ['create_at', '_id']
 
     default_values = {
         '_id': next_id,
-        'create_at': datetime.datetime.utcnow
+        'create_at': time.time
     }
+
 
 
 @connection.register
@@ -79,35 +77,38 @@ class User(RootDoc):
         'name': basestring,
         'password': basestring,
         'is_admin': bool,
-        'email': basestring
+        'email': basestring,
     }
 
     required_fields = ['name', 'password', 'email']
 
-    default_values = {
-        'is_admin': False
-    }
+    default_values = {'is_admin': False}
 
     validators = {
-        'email': ValidatorUtils.email_validator
+    #    'email': ValidatorUtils.email_validator
     }
 
 
-@connection.register
 class Ticket(RootDoc):
-    """
+    """ the common attrs of a ticket
     """
     structure = {
-        'no': int,
+        'num': int,
         'title': basestring,
         'description': basestring,
         'status': basestring,
-        'submitter_id': uuid.UUID,
+        'submitter_id': basestring,
         'submitter_name': basestring
     }
 
-    required_fields = ['no', 'title', 'status',
-                       'submitter_id', 'submitter_name']
+    required_fields = [
+        'num',
+        'title',
+        'submitter_id',
+        'submitter_name'
+    ]
+
+    default_values = {'status': 'New'}
 
 
 @connection.register
@@ -135,10 +136,12 @@ class Feature(Ticket):
 class Ticketing(RootDoc):
     """ represent the mapping relation of tickets and user.
     """
-    __collection__ = 'Ticketing'
+    __collection__ = 'ticketing'
 
     structure = {
         'ticket_id': basestring,
-        'asignee_id': basestring,
+        'assignee_id': basestring,
         'assignee_name': basestring
     }
+
+    required_fields = ['ticket_id', 'assignee_id', 'assignee_name']
