@@ -2,15 +2,12 @@
     This module is used to handle db operations.
 """
 from exception import UnImplementException, UnKnownAttributeExcetpion
-from db.schema import connection, Ticket, Bug, Improvement, Feature, User, Ticketing
+from document import connection, Ticket, Bug, Improvement, Feature, User, Ticketing
 
 
 class Handler(object):
     """ this class defines interfaces that interact with db.
     """
-    def __init__(self):
-        pass
-
     def create(self, data):
         raise UnImplementException("SubClass of Handler: <creat>")
 
@@ -30,65 +27,38 @@ class Handler(object):
 class HandlerImp(Handler):
     """ this class implements the interfaces that interact with db.
     """
+    conn = connection
 
     def __init__(self, Cls):
         self.Cls = Cls
 
     def create(self, data):
-        """ data is a dict that means the items attr-value.
-        """
         checkattrs(self.Cls, data)
-        Cls = self.Cls
-        obj = connection.Cls()
+        obj = self.conn[self.Cls.__name__]()
         assignattrs(obj, data)
         obj.save()
 
     def delete(self, _filter):
-        """ delete by id if id is provided, else by other attrs.
-        """
         checkattrs(self.Cls, _filter)
-        objs = self.Cls.find(_filter)
+        objs = self.conn[self.Cls.__name__].find(_filter)
+        del_count = 0
         for obj in objs:
             obj.delete()
-        return len(objs)
+            del_count = del_count + 1
+        return del_count
 
     def update(self, _filter, data):
-        """ update by id if id is provided, else by other attrs.
-        """
         checkattrs(self.Cls, _filter)
         checkattrs(self.Cls, data)
-        objs = Cls.find_one(_filter)
-        for obj in objs:
-            assignattrs(obj, data)
-            obj.update()
-        return len(objs)
+        objs = self.conn[self.Cls.__name__].find_and_modify(_filter, data)
+        return objs
 
     def get(self, _filter):
-        """ get by id if id is provided, else by other attrs.
-        """
         checkattrs(self.Cls, _filter)
-        Cls = self.Cls
-        return connection.Cls.find(_filter._id)
+        return [obj for obj in self.conn[self.Cls.__name__].find(_filter)]
 
     def list(self):
-        return Cls.find()
-
-
-def checkattrs(Cls, _filter):
-    """ check if some class include all the attributes in _filter.
-    """
-    if len(_filter) == 0:
-        return None
-    for(attr, value) in _filter.items():
-        if not attr in Cls._namespaces:
-            raise UnKnownAttributeExcetpion('%s has no attribute <%s>' % (Cls, attr))
-
-
-def assignattrs(obj, data):
-    """ assign all attribute values in data to obj.
-    """
-    for (attr, value) in data.items():
-        obj.attr = value
+        return [obj for obj in self.conn[self.Cls.__name__].find()]
 
 
 class TicketHandler(HandlerImp):
@@ -101,7 +71,7 @@ class TicketHandler(HandlerImp):
             raise UnExpectClassException('TicketHandler can not handle <%s>' % Cls)
 
 
-class UserHandler( HandlerImp):
+class UserHandler(HandlerImp):
     """
     """
     def __init__(self, Cls):
@@ -111,7 +81,7 @@ class UserHandler( HandlerImp):
             raise UnExpectClassException('UserHandler can not handle <%s>' % Cls)
 
 
-class TicketingHandler(Handler, HandlerImp):
+class TicketingHandler(HandlerImp):
     """
     """
     def __init__(self, Cls):
@@ -119,3 +89,20 @@ class TicketingHandler(Handler, HandlerImp):
             super(TicketingHandler, self).__init__(Cls)
         else:
             raise UnExpectClassException('TicketingHandler can not handle <%s>' % Cls)
+
+
+def checkattrs(Cls, _filter):
+    """ check if some class include all the attributes in _filter.
+    """
+    if len(_filter) == 0:
+        raise Exception('filter is None')
+    for(attr, value) in _filter.items():
+        if not attr in Cls._namespaces:
+            raise UnKnownAttributeExcetpion('%s has no attribute <%s>' % (Cls, attr))
+
+
+def assignattrs(obj, data):
+    """ assign all attribute values in data to obj.
+    """
+    for (attr, value) in data.items():
+        obj[attr] = value
