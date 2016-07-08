@@ -101,9 +101,9 @@ class TicketHandler(HandlerImp):
     """ This handler is used to handle bug, improvement, feature.
     """
     def __init__(self, Cls):
-        if issubclass(Cls, Bug) or \
-                issubclass(Cls, Feature) or \
-                    issubclass(Cls, Improvement):
+        if issubclass(Cls, Bug) or
+                issubclass(Cls, Feature) or
+                issubclass(Cls, Improvement):
             super(TicketHandler, self).__init__(Cls)  # ignore ?
         else:
             raise UnExpectClassException('TicketHandler can not handle <%s>' % Cls)

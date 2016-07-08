@@ -12,7 +12,7 @@ from validator import ValidatorUtils
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_HOST = 'localhost'
+DEFAULT_HOST = '192.168.56.202'
 DEFAULT_PORT = 27017
 
 connection = Connection(DEFAULT_HOST, DEFAULT_PORT)
