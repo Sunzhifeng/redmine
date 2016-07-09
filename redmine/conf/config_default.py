@@ -16,7 +16,7 @@ configs = {
             },
             'mongo': {
                 'ip': '127.0.0.1',
-                'port': 2017
+                'port': 27017
             }
     },
     'session': {

@@ -2,29 +2,31 @@
     This moudle is used to handle some services related to requirements.
 """
 
-from ticket import Ticket, BugTicket, FeatureTicket, ImprovementTicket
 from handler import TicketHandler, UserHandler, TicketingHandler
-from IOC import features, FeatureUtils, RequiredFeature
+from ioc import FeatureUtils as FU
+from ioc import RequiredFeature as RF
 
 
-class userService(object):
+class UserService(object):
     """
     """
-    userHandler= RequiredFeature('userHandler',
-                                 FeatureUtils.isInstanceOf(UserHandler))
+    userHandler= RF(UserHandler.__name__, FU.isInstanceOf(UserHandler))
 
     def login(self, name, password):
-        user = userHandler.get(name)
+        user = self.userHandler.get(name)
         if user and user.password == password:
             return True
         else:
             return False
 
     def regist(self, name, password, is_admin, email):
-        userHanlder.create({'name': name,
-                            'password': password,
-                            'admin': is_admin,
-                            'email': email})
+        user_data = {
+            'name': name,
+            'password': password,
+            'is_admin': is_admin,
+            'email': email
+        }
+        self.userHandler.create(user_data)
         return True
 
     def modify_pwd(self, name, password):
@@ -34,14 +36,11 @@ class userService(object):
 class TicketService(object):
     """ define some interfaces for ticket services.
     """
-    ticketHandler = RequiredFeature('ticketHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
-    userHandler = RequiredFeature('userHandler',
-                                  FeatureUtils.isInstanceOf(UserHandler))
+    userHandler = RF(UserHandler.__name__, FU.isInstanceOf(UserHandler))
 
     def create(self, num, title, description, status , submitter_name):
-        submitter = userHandler.get(name=submitter_name)
-        ticketHandler.create({'num': num,
+        submitter = self.userHandler.get(name=submitter_name)
+        self.ticketHandler.create({'num': num,
                               'title': title,
                               'description': description,
                               'status': 'New',
@@ -50,51 +49,44 @@ class TicketService(object):
 
     def verify(self, ticket_id):
         updated_fields = {'status': 'verified'}
-        tickethandler.update(ticket_id, updated_fields)
+        self.tickethandler.update(ticket_id, updated_fields)
 
     def close(self, ticket_id):
         updated_fields = {'status': 'closed'}
-        ticketHandler.update(ticket_id, updated_fields)
+        self.ticketHandler.update(ticket_id, updated_fields)
 
 
-class BugSerivce(TicketService):
+class BugService(TicketService):
     """
     """
-    ticketHandler = RequiredFeature('bugHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
+    ticketHandler = RF('bugHandler', FU.isInstanceOf(TicketHandler))
 
     def feed_back(self, ticket_num, content):
-        ticketHandler.update({'num': ticket_num}, {'found_in': content})
+        self.ticketHandler.update({'num': ticket_num}, {'found_in': content})
 
 
 class ImprovementService(TicketService):
     """
     """
-    ticketHandler = RequiredFeature('improvementHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
+    ticketHandler = RF('improvementHandler', FU.isInstanceOf(TicketHandler))
 
 
 class FeatureService(TicketService):
     """
     """
-    ticketHandler = RequiredFeature('featureHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
+    ticketHandler = RF('featureHandler', FU.isInstanceOf(TicketHandler))
 
 
 class TicketingService(object):
     """
     """
-    userHandler = RequiredFeature('userHandler',
-                                  FeatureUtils.isInstanceOf(UserHandler))
-    ticketHandler = RequiredFeature('ticketHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
-    ticketingHandler = RequiredFeature('ticketingHandler',
-                                       FeatureUtils.isInstanceOf(Handler))
+    userHandler = RF('userHandler', FU.isInstanceOf(UserHandler))
+    ticketingHandler = RF('ticketingHandler', FU.isInstanceOf(TicketingHandler))
 
     def assign(self, num, name):
-        assignee = userHandler.get(name=username)
-        ticket =ticketHandler.get(num=num)
-        ticketingHandler.create(ticket_id=ticket._id,
+        assignee = self.userHandler.get({'name': name})
+        ticket = self.ticketHandler.get({'num': num})
+        self.ticketingHandler.create(ticket_id=ticket._id,
                                 assignee_id=assignee._id,
                                 assignee_name=name)
 
@@ -102,19 +94,16 @@ class TicketingService(object):
 class BugTicketingService(TicketingService):
     """
     """
-    ticketHandler = RequiredFeature('bugHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
+    ticketHandler = RF('bugHandler', FU.isInstanceOf(TicketHandler))
 
 
 class FeatureTicketingService(TicketingService):
     """
     """
-    ticketHandler = RequiredFeature('featureHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
+    ticketHandler = RF('featureHandler', FU.isInstanceOf(TicketHandler))
 
 
 class ImprovementTicketingService(TicketingService):
     """
     """
-    ticketHandler = RequiredFeature('improvementHandler',
-                                    FeatureUtils.isInstanceOf(TicketHandler))
+    ticketHandler = RF('improvementHandler', FU.isInstanceOf(TicketHandler))

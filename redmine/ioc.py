@@ -82,8 +82,8 @@ class RequiredFeature(object):
 
     def request(self):
         obj = features[self.feature]
-        assert self.assertion(obj), 'The value %r of %r does not match the specified criteria'\
-            % (obj, self.feature)
+#        assert self.assertion(obj), 'The value %r of %r does not match the specified criteria'\
+#            % (obj, self.feature)
         return obj
 
 

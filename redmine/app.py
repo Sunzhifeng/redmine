@@ -1,27 +1,27 @@
-"""
-    This moudle is used to handle all DI in app.
-"""
-from db.mysql.model import BugTicket, FeatureTicket, ImprovementTicket
-from db.mysql.model import Ticketing, User
-from db.handler import TicketHandler, UserHandler, TicketingHandler
-from service import BugService, FeatureService, ImprovementService
-from IOC import features, FeatureUtils
+import logging
+
+logging.basicConfig(filename='../logs/app.log',
+                    level=logging.INFO)
+
+from di import execute
+from ioc import RequiredFeature, FeatureUtils
+from service import UserService
 
 
-def execute():
-    """ this function is used to execute dependency inject (DI).
-    """
-    features.provide('bug', BugTicket('bug','ezhifsu','foundin'))
-    features.provide('feature', FeatureTicket('feature','ezhifsu','target'))
-    features.provide('improvement', ImprovementTicket('bug','ezhifsu','foundin'))
-    features.provider('bugHandler', TicketHandler(BugTicket))
-    features.provider('featureHandler', TicketHandler(FeatureTicket))
-    features.provider('imporvementHandler', TicketHandler(ImprovementTicket))
-    features.provider('userHandler', UserHandler(User))
-    features.provider('ticketingHandler', TicketingHandler(Ticketing))
+class App():
+    userService = RequiredFeature(UserService.__name__,
+                                  FeatureUtils.isInstanceOf(UserService))
 
-    features.provide('bugService', BugService()) # singleton lifestyle
-    features.provide('featureService', FeatureService())
-    features.provide('improvementService', ImprovementService())
+    def __call__(self, *args, **kwargs):
+        return self.run(*args, **kwargs)
+
+    def run(self):
+       self.userService.regist('test', 'test', False, 'test@example.com')
 
 
+app = App()
+
+
+if __name__ == '__main__':
+    execute()
+    app()

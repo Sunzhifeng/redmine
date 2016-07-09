@@ -11,11 +11,8 @@ from mongokit import Document, Connection
 from validator import ValidatorUtils
 
 logger = logging.getLogger(__name__)
-
-DEFAULT_HOST = '192.168.56.202'
-DEFAULT_PORT = 27017
-
-connection = Connection(DEFAULT_HOST, DEFAULT_PORT)
+DEFAULT_HOST = ''
+DEFAULT_PORT = ''
 
 class MongoDB(object):
     """ This class is used as interface for mongoDB operation.
@@ -67,7 +64,6 @@ class RootDoc(Document):
 
 
 
-@connection.register
 class User(RootDoc):
     """
     """
@@ -111,19 +107,16 @@ class Ticket(RootDoc):
     default_values = {'status': 'New'}
 
 
-@connection.register
 class Bug(Ticket):
     __collection__ = 'bugs'
 
     structure = {'found_in': basestring}
 
 
-@connection.register
 class Improvement(Ticket):
     __collection__ = 'improvements'
 
 
-@connection.register
 class Feature(Ticket):
     __collection__ = 'features'
 
@@ -132,7 +125,6 @@ class Feature(Ticket):
     required_fields = ['target_sprint']
 
 
-@connection.register
 class Ticketing(RootDoc):
     """ represent the mapping relation of tickets and user.
     """
